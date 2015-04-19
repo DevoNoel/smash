@@ -19,12 +19,27 @@ function love.load()
     aSwitch = false,
   }
 
+  suit1 = {
+    sprite = love.graphics.newImage('elf.png'),
+    x = 100,
+    y = 100,
+  }
+
+  suit2 = {
+    sprite = love.graphics.newImage('elf2.png'),
+    x = 400,
+    y = 400,
+  }
+
   bullets = {}
   bulletCount = 0
 end
 
 function love.draw()
   love.graphics.setColor(255,255,255)
+
+  love.graphics.draw(suit1.sprite, suit1.x, suit1.y, 0, -1, 1)
+  love.graphics.draw(suit2.sprite, suit2.x, suit2.y, 0, 1, 1)
 
   if player.flipSprite then
     love.graphics.draw(getActiveSprite(), player.x, player.y, 0, -1, 1)
