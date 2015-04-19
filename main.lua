@@ -26,12 +26,14 @@ function love.load()
       x = math.random(100, 900),
       y = math.random(100, 500),
       flipSprite = false,
+      killed = false,
     },
     {
       sprite = love.graphics.newImage('elf2.png'),
       x = math.random(100, 900),
       y = math.random(100, 500),
       flipSprite = false,
+      killed = false,
     },
   }
 
@@ -69,6 +71,7 @@ function love.update(dt)
   bulletsTravel(dt)
   bulletsCollide(dt)
   bulletsClean(dt)
+  suitKill(dt)
   suitSpawn(dt)
 end
 
@@ -184,6 +187,19 @@ function bulletsTravel(dt)
 end
 
 function bulletsCollide(dt)
+  for i=1, bulletCount, 1 do
+    for j=1, suitCount, 1 do
+      suitWidth = suits[j].sprite:getWidth()
+      suitHeight = suits[j].sprite:getHeight()
+
+      if bullets[i].x <= suits[j].x + suitWidth and bullets[i].x + bullets[i].width >= suits[j].x then
+        if bullets[i].y <= suits[j].y + suitHeight and bullets[i].y + bullets[i].height >= suits[j].y then
+          suits[j].killed = true
+          bullets[i].collision = true
+        end
+      end
+    end
+  end
   -- for i=1, bulletCount, 1 do
   --   if bullets[i].x <= suit1.x and bullets[i].x >= suit1.x - 5 then
   --     bullets[i].collision = true
@@ -206,6 +222,21 @@ function bulletsClean(dt)
   bulletCount = bulletsKept
 end
 
+function suitKill(dt)
+  suitsKept = 0
+  keepSuits = {}
+
+  for i=1, suitCount, 1 do
+    if not suits[i].killed then
+      suitsKept = suitsKept + 1
+      keepSuits[suitsKept] = suits[i]
+    end
+  end
+
+  suits = keepSuits
+  suitCount = suitsKept
+end
+
 function suitSpawn(dt)
   if suitCount == 0 then
     suitCount = 2
@@ -213,9 +244,10 @@ function suitSpawn(dt)
     for i=1, suitCount, 1 do
       suits[i] = {
         sprite = love.graphics.newImage('elf.png'),
-        x = 100,
-        y = 100,
+        x = math.random(100, 900),
+        y = math.random(100, 500),
         flipSprite = false,
+        killed = false,
       }
     end
   end
