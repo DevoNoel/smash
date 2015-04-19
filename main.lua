@@ -19,16 +19,20 @@ function love.load()
     aSwitch = false,
   }
 
-  suit1 = {
-    sprite = love.graphics.newImage('elf.png'),
-    x = 100,
-    y = 100,
-  }
-
-  suit2 = {
-    sprite = love.graphics.newImage('elf2.png'),
-    x = 400,
-    y = 400,
+  suitCount = 2
+  suits = {
+    {
+      sprite = love.graphics.newImage('elf.png'),
+      x = math.random(100, 900),
+      y = math.random(100, 500),
+      flipSprite = false,
+    },
+    {
+      sprite = love.graphics.newImage('elf2.png'),
+      x = math.random(100, 900),
+      y = math.random(100, 500),
+      flipSprite = false,
+    },
   }
 
   bullets = {}
@@ -38,14 +42,17 @@ end
 function love.draw()
   love.graphics.setColor(255,255,255)
 
-  love.graphics.draw(suit1.sprite, suit1.x, suit1.y, 0, -1, 1)
-  love.graphics.draw(suit2.sprite, suit2.x, suit2.y, 0, 1, 1)
-
-  if player.flipSprite then
-    love.graphics.draw(getActiveSprite(), player.x, player.y, 0, -1, 1)
-  else
-    love.graphics.draw(getActiveSprite(), player.x, player.y, 0, 1, 1)
+  for i=1, suitCount, 1 do
+    love.graphics.draw(suits[i].sprite,
+                      suits[i].x,
+                      suits[i].y,
+                      0, flip(suits[i].flipSprite), 1)
   end
+
+  love.graphics.draw(getActiveSprite(),
+                    player.x,
+                    player.y,
+                    0, flip(player.flipSprite), 1)
 
   for i=1, bulletCount, 1 do
     love.graphics.rectangle("fill",
@@ -62,6 +69,7 @@ function love.update(dt)
   bulletsTravel(dt)
   bulletsCollide(dt)
   bulletsClean(dt)
+  suitSpawn(dt)
 end
 
 function getActiveSprite()
@@ -188,7 +196,7 @@ function bulletsClean(dt)
   keepBullets = {}
 
   for i=1, bulletCount, 1 do
-    if not bullets[i].collision and bullets[i].x > 0 and bullets[i].x < 1000  then
+    if not bullets[i].collision and bullets[i].x > 0 and bullets[i].x < 1000 then
       bulletsKept = bulletsKept + 1
       keepBullets[bulletsKept] = bullets[i]
     end
@@ -198,3 +206,25 @@ function bulletsClean(dt)
   bulletCount = bulletsKept
 end
 
+function suitSpawn(dt)
+  if suitCount == 0 then
+    suitCount = 2
+
+    for i=1, suitCount, 1 do
+      suits[i] = {
+        sprite = love.graphics.newImage('elf.png'),
+        x = 100,
+        y = 100,
+        flipSprite = false,
+      }
+    end
+  end
+end
+
+function flip(f)
+  if f then
+    return -1
+  else
+    return 1
+  end
+end
