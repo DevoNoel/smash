@@ -24,14 +24,14 @@ function love.load()
     {
       sprite = love.graphics.newImage('elf.png'),
       x = math.random(100, 900),
-      y = math.random(100, 500),
+      y = math.random(200, 500),
       flipSprite = false,
       killed = false,
     },
     {
       sprite = love.graphics.newImage('elf2.png'),
       x = math.random(100, 900),
-      y = math.random(100, 500),
+      y = math.random(200, 500),
       flipSprite = false,
       killed = false,
     },
@@ -42,8 +42,21 @@ function love.load()
 end
 
 function love.draw()
-  love.graphics.setColor(255,255,255)
+  love.graphics.setColor(150,150,150)
+  love.graphics.rectangle("fill",
+    0,
+    200,
+    1000,
+    400)
 
+  love.graphics.setColor(200,220,255)
+  love.graphics.rectangle("fill",
+    0,
+    0,
+    1000,
+    200)
+
+  love.graphics.setColor(255,255,255)
   for i=1, suitCount, 1 do
     love.graphics.draw(suits[i].sprite,
                       suits[i].x,
@@ -68,6 +81,7 @@ end
 function love.update(dt)
   playerAnimateTimer(dt)
   playerMove(dt)
+  wallCollision(dt)
   bulletsTravel(dt)
   bulletsCollide(dt)
   bulletsClean(dt)
@@ -200,11 +214,6 @@ function bulletsCollide(dt)
       end
     end
   end
-  -- for i=1, bulletCount, 1 do
-  --   if bullets[i].x <= suit1.x and bullets[i].x >= suit1.x - 5 then
-  --     bullets[i].collision = true
-  --   end
-  -- end
 end
 
 function bulletsClean(dt)
@@ -259,7 +268,7 @@ function variant()
   variantNum = math.random(1,4)
   variantTable = {
     x = math.random(100, 900),
-    y = math.random(100, 500),
+    y = math.random(200, 500),
     killed = false,
   }
 
@@ -280,4 +289,21 @@ function variant()
   end
 
   return variantTable
+end
+
+function wallCollision(dt)
+  playerWidth = getActiveSprite():getWidth()
+  playerHeight = getActiveSprite():getHeight()
+
+  if player.x < 0 + playerWidth then
+    player.x = 0 + playerWidth
+  elseif player.x > love.graphics.getWidth() - playerWidth then
+    player.x = love.graphics.getWidth() - playerWidth
+  end
+
+  if player.y < 210 - playerHeight then
+    player.y = 210 - playerHeight
+  elseif player.y > love.graphics.getHeight() - playerHeight then
+    player.y = love.graphics.getHeight() - playerHeight
+  end
 end
