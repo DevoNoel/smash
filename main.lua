@@ -60,6 +60,7 @@ function love.update(dt)
   playerAnimateTimer(dt)
   playerMove(dt)
   bulletsTravel(dt)
+  bulletsCollide(dt)
   bulletsClean(dt)
 end
 
@@ -157,6 +158,7 @@ function shoot()
       height = 8,
       speed = 600,
       reverse = player.flipSprite,
+      collision = false,
     }
   else
     player.unholstered = true
@@ -173,12 +175,20 @@ function bulletsTravel(dt)
   end
 end
 
+function bulletsCollide(dt)
+  -- for i=1, bulletCount, 1 do
+  --   if bullets[i].x <= suit1.x and bullets[i].x >= suit1.x - 5 then
+  --     bullets[i].collision = true
+  --   end
+  -- end
+end
+
 function bulletsClean(dt)
   bulletsKept = 0
   keepBullets = {}
 
   for i=1, bulletCount, 1 do
-    if bullets[i].x > 0 and bullets[i].x < 1000  then
+    if not bullets[i].collision and bullets[i].x > 0 and bullets[i].x < 1000  then
       bulletsKept = bulletsKept + 1
       keepBullets[bulletsKept] = bullets[i]
     end
