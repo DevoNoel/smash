@@ -242,13 +242,7 @@ function suitSpawn(dt)
     suitCount = 2
 
     for i=1, suitCount, 1 do
-      suits[i] = {
-        sprite = love.graphics.newImage('elf.png'),
-        x = math.random(100, 900),
-        y = math.random(100, 500),
-        flipSprite = false,
-        killed = false,
-      }
+      suits[i] = variant()
     end
   end
 end
@@ -259,4 +253,31 @@ function flip(f)
   else
     return 1
   end
+end
+
+function variant()
+  variantNum = math.random(1,4)
+  variantTable = {
+    x = math.random(100, 900),
+    y = math.random(100, 500),
+    killed = false,
+  }
+
+  if variantNum % 2 == 0 then
+    variantTable.flipSprite = false
+    if variantNum % 4 == 0 then
+      variantTable.sprite = love.graphics.newImage('elf.png')
+    else
+      variantTable.sprite = love.graphics.newImage('elf2.png')
+    end
+  else
+    variantTable.flipSprite = true
+    if variantNum % 3 == 0 then
+      variantTable.sprite = love.graphics.newImage('elf.png')
+    else
+      variantTable.sprite = love.graphics.newImage('elf2.png')
+    end
+  end
+
+  return variantTable
 end
