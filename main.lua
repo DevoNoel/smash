@@ -248,7 +248,7 @@ end
 
 function suitSpawn(dt)
   if suitCount == 0 then
-    suitCount = 2
+    suitCount = math.random(2, 5)
 
     for i=1, suitCount, 1 do
       suits[i] = variant()
