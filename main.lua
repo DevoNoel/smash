@@ -18,19 +18,34 @@ function love.load()
     aRate = 0.3,
     aSwitch = false,
   }
+
+  bullets = {}
+  bulletCount = 0
 end
 
 function love.draw()
+  love.graphics.setColor(255,255,255)
+
   if player.flipSprite then
     love.graphics.draw(getActiveSprite(), player.x, player.y, 0, -1, 1)
   else
     love.graphics.draw(getActiveSprite(), player.x, player.y, 0, 1, 1)
+  end
+
+  for i=1, bulletCount, 1 do
+    love.graphics.rectangle("fill",
+      bullets[i].x,
+      bullets[i].y,
+      bullets[i].width,
+      bullets[i].height)
   end
 end
 
 function love.update(dt)
   playerAnimateTimer(dt)
   playerMove(dt)
+  bulletsTravel(dt)
+  bulletsClean(dt)
 end
 
 function getActiveSprite()
@@ -96,6 +111,10 @@ function love.keypressed(key)
   if key == "lshift" or key == "rshift" then
     unholster()
   end
+
+  if key == " " then
+    shoot()
+  end
 end
 
 function unholster()
@@ -104,5 +123,53 @@ function unholster()
   else
     player.unholstered = true
   end
+end
+
+function shoot()
+  if player.unholstered then
+    bulletCount = bulletCount + 1
+
+    if player.flipSprite then
+      xOffset = -34
+    else
+      xOffset = 34
+    end
+
+    bullets[bulletCount] = {
+      x = player.x + xOffset,
+      y = player.y + 45,
+      width = 16,
+      height = 8,
+      speed = 600,
+      reverse = player.flipSprite,
+    }
+  else
+    player.unholstered = true
+  end
+end
+
+function bulletsTravel(dt)
+  for i=1, bulletCount, 1 do
+    if bullets[i].reverse then
+      bullets[i].x = bullets[i].x - math.floor(bullets[i].speed * dt)
+    else
+      bullets[i].x = bullets[i].x + math.floor(bullets[i].speed * dt)
+    end
+  end
+end
+
+function bulletsClean(dt)
+  bulletsKept = 0
+  keepBullets = {}
+
+  for i=1, bulletCount, 1 do
+    if bullets[i].x > 0 and bullets[i].x < 1000  then
+      bulletsKept = bulletsKept + 1
+      keepBullets[bulletsKept] = bullets[i]
+    end
+  end
+
+  bullets = keepBullets
+  bulletCount = bulletsKept
 end
 
